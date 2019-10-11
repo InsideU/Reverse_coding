@@ -8,20 +8,24 @@ app.get('/downloads',(req,res)=>{
     db.connect((err)=>{
         var parameters=req.query;
        const teamnumber=parameters.teamno;
-       console.log(teamnumber);
+       //console.log(teamnumber);
         if(err){
             console.log("Wait for the questions to be alloted");
         }
-        let sql1=`select * from questions where teamno = ${teamnumber}` ;
+        let sql1=`select * from allotment where teamid = ${teamnumber}` ;
         db.query(sql1,(err,results)=>{
             if(err) throw err;
-            var filename=results[0].filehash
-            console.log(results[0].filehash)
-            // res.send(results)
-            res.json({
-                win:`/download/${filename}/_run.exe`,
-                mac:`/download/${filename}/run.o`,
-            })
+            results.forEach((elements)=>{
+                var questionnumbers=elements.questionno;
+                console.log(questionnumbers);
+            });
+            //  var filename=results[0].questionno
+            //  console.log(results[0].questionno)
+            //  res.send(results)
+            // res.json({
+            //     win:`/download/${filename}/_run.exe`,
+            //     mac:`/download/${filename}/run.o`,
+            // });
         });
         
         // console.log('You Have been alloted a Question');
@@ -45,7 +49,7 @@ db.connect((err)=>{
     if(err){
         throw err;
     }
-    console.log('mysql connected');
+   // console.log('mysql connected');
     
 });
 
