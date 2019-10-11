@@ -1,0 +1,14 @@
+{
+  "name": "reversecoding",
+  "version": "1.0.0",
+  "description": "Portal_of_ACM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Umang Singh",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.17.1"
+  }
+}
