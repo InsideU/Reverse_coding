@@ -19,7 +19,7 @@ app.get('/downloads',(req,res)=>{
             console.log(results[0].filehash)
             // res.send(results)
             res.json({
-                win:`/download/${filename}/${id}_run.exe`,
+                win:`/download/${filename}/_run.exe`,
                 mac:`/download/${filename}/run.o`,
             })
         });
