@@ -17,10 +17,10 @@ app.get('/downloads', (req, res) => {
             if (err) throw err;
             results.forEach((elements) => {
                 var questionnumbers = elements.questionno;
-                console.log(questionnumbers)
+               // console.log(questionnumbers)
                 //see this only one question location is printed
                 let sql2 = `select (route) from routetest where qno=${questionnumbers}`;
-                console.log(sql2)
+                //console.log(sql2)
 
                 db.query(sql2, (err, results) => {
                     if (err) throw err;
