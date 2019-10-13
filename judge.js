@@ -1,6 +1,6 @@
 rp = require('request-promise')
 fs = require('fs')
-const langId = { 'PY': 34, 'JAVA': 27, 'CPP': 10, 'C': 4 }
+const langId = { 'py': 34, 'java': 27, 'cpp': 10, 'c': 4 }
 const url = 'http://35.202.74.206:3000/'
 function run(source, input, output, lang) {
     return new Promise((resolve, reject) => {
