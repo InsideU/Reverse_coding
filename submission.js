@@ -77,7 +77,7 @@ var storage= multer.diskStorage({
                     count+=1
                 }
                 });
-                var points = (count/4)*150;
+                var points = (count/4)*0;
                 // console.log({
                 //     counts : count ,
                 //     points: (count/2)*150
