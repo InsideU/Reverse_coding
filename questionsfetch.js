@@ -1,67 +1,51 @@
 const express = require('express');
 const mysql = require('mysql');
-
+const router = require('express').Router()
+const teamPolicy = require('./teamPolicy');
 const app = express();
-app.use('/download', express.static('./files/download'))
-//downloading the zip file from the system 
-app.get('/downloads', (req, res) => {
-    db.connect((err) => {
-        var parameters = req.query;
-        const teamnumber = parameters.teamno;
-        //console.log(teamnumber);
-        if (err) {
-            console.log("Wait for the questions to be alloted");
-        }
-        let sql1 = `select * from allotment where teamid = ${teamnumber}`;
-        db.query(sql1, (err, results) => {
-            if (err) throw err;
-            results.forEach((elements) => {
-                var questionnumbers = elements.questionno;
-               // console.log(questionnumbers)
-                //see this only one question location is printed
-                let sql2 = `select (route) from routetest where qno=${questionnumbers}`;
-                //console.log(sql2)
-
-                db.query(sql2, (err, results) => {
-                    if (err) throw err;
-                    console.log(results);
-                });
-            });
-            //  var filename=results[0].questionno
-            //  console.log(results[0].questionno)
-            //  res.send(results)
-            // res.json({
-            //     win:`/download/${filename}/_run.exe`,
-            //     mac:`/download/${filename}/run.o`,
-            // });
-        });
-
-        // console.log('You Have been alloted a Question');
-        // var filepath=__dirname+'/downloads/RC2.exe';
-        // res.download(filepath)
-    }); //end of the database connection
-
-});//end of the zip file downloading
 
 
-// create connection 
+function run(i, arr, results,db,cb) {
+    if (i >= results.length) return cb(arr)
+    var questionnumbers = results[i].questionno;
+    let sql2 = `select (route) from routetest where questionno=${questionnumbers}`;
+    db.query(sql2, (err, res) => {
+        if (err) throw err;
+        arr.push({
+            win: res[0].route,
+            scoredPoints: questioscore,
+            _id: questionnumbers
+        })
+        run(i + 1, arr,results,db,cb)
+        //res.json(results);  // here is the sychronization problem
+        // console.log({
+        //     win: results[0].route,
+        //     score: questioscore,
+        //     qid: questionnumbers
+        // })
+    });
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'revcoding'
+    // a=await req.db.query(sql2);
+    // console.log(a)
+}
+
+router.use('/download', express.static('./files/download'))
+router.post('/downloads',teamPolicy, (req, res) => {
+
+    
+    let sql1 = `select * from allotment where teamid = ${req.teamno}`;
+    req.db.query(sql1, (err, results) => {
+        if (err) throw err;
+        questioscore = (results[0].qscore)
+        run(0,[],results,req.db,(ar)=>{
+            res.json({"Question Details":ar})
+        })
+        // results.forEach((elements) => {
+
+        // });
+    });
 });
-//connect 
-db.connect((err) => {
-    if (err) {
-        throw err;
-    }
-    // console.log('mysql connected');
-
-});
-
-// routing condition 
+module.exports = router;
 
 
 
@@ -69,7 +53,4 @@ db.connect((err) => {
 
 
 
-app.listen('3000', () => {
-    console.log('Server started on port 3000');
-});
 

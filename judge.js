@@ -1,7 +1,7 @@
 rp = require('request-promise')
 fs = require('fs')
-const langId = { 'py': 34, 'java': 27, 'cpp': 10, 'c': 4 }
-const url = 'http://35.202.74.206:3000/'
+const langId = { 'PY': 34, 'JAVA': 27, 'CPP': 10, 'C': 4 }
+const url = 'http://35.226.54.217:3000/'
 function run(source, input, output, lang) {
     return new Promise((resolve, reject) => {
         var options = {
@@ -17,8 +17,9 @@ function run(source, input, output, lang) {
             json: true
         };
         rp(options).then((res) => {
-            // console.log(res)
+            console.log(res)
             switch (res.status.id) {
+
                 case 3:
                     resolve(true)
                     break
@@ -29,13 +30,14 @@ function run(source, input, output, lang) {
                     reject("Time limit exceded")
                     break
                 case 6:
-                    reject(res.compile_output || "Compilation Error")
+                    reject("Compilation Error")
                     break
                 default:
-                    reject(res.stderr || "Runtime Error")
+                    reject("Runtime Error")
             }
         }).catch((e) => {
-            reject(e.response.body.exception || 'Unable to execute the provided code. Please test it locally.')
+            
+            reject('Unable to Executes')
         })
     })
 }

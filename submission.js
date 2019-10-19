@@ -1,9 +1,11 @@
 const express = require('express');
-const app=express();
-const mysql=require('mysql');
+const app = express();
+const mysql = require('mysql');
 const multer = require('multer');
 judge = require('./judge')
+const router = require('express').Router();
 var teamNumber;
+
 
 // storing the current file location to be executed in the database
 // app.post('/api/userfile',function(req,res){
@@ -18,106 +20,117 @@ var teamNumber;
 
 
 // File storage code begins here
-var storage= multer.diskStorage({
-    
-    destination : function( req,file,callback){
-        callback(null,'./uploads');
+var storage = multer.diskStorage({
+
+    destination: function (req, file, callback) {
+        callback(null, './uploads');
     },
     filename: function (req, file, callback) {
         teamNumber = req.query.teamno;
-        const questionNumber=req.query.qno;
-        global.filetypes= req.query.type;
-        filename=`${questionNumber}_${teamNumber}` + '-' + Date.now()+`.${filetypes}`;
+        const questionNumber = req.query.qno;
+        global.filetypes = req.query.type;
+        filename = `${questionNumber}_${teamNumber}` + '-' + Date.now() + `.${filetypes}`;
         callback(null, filename);
         // start of the judge 
-        
+
         // var userfile=file.originalname
         // console.log(userfile);
 
-// console.log(
-    console.log(questionNumber);
-    console.log(filename);
+        // console.log(
+        console.log(questionNumber);
+        console.log(filename);
         //end of the judge code 
-    // console.log(filetypes);
-      
-    }
-    });
+        // console.log(filetypes);
 
-    
-    var uploads=multer({storage : storage}).single('file');
-    app.post('/api/userfile',function(req,res){
-        // const parameters = req.query;
-        // const teamnumbers = parameters.teamno;
-        // const questionnumbers= parameters.qno;
-        // console.log(questionnumbers)
-        uploads(req,res,function(err) {
-            if(err) {
-                console.log(err.message)
-                return res.end("Error uploading file.");
-            }
-           
-            // console.log("this is the ",`${filetypes}`)
+    }
+});
+
+
+var uploads = multer({ storage: storage }).single('file');
+router.post('/api/userfile', function (req, res) {
+    // const parameters = req.query;
+    // const teamnumbers = parameters.teamno;
+    // const questionnumbers= parameters.qno;
+    // console.log(questionnumbers)
+    uploads(req, res, function (err) {
+        if (err) {
+            console.log(err.message)
+            return res.end("Error uploading file.");
+        }
+
+        // console.log("this is the ",`${filetypes}`)
         //    console.log(req.file.filename)  // current uploaded filename
-           judge( `./uploads/${filename}`, [
+        judge(`./uploads/${filename}`, [
             `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\1\\test\\I1.txt`,
             `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\1\\test\\I2.txt`,
         ], [
             `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\1\\test\\O1.txt`,
             `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\1\\test\\O2.txt`,
         ], `${filetypes}`).then((result) => {
-            
+
             // console.log({
             //     err: false,
             //     result, points: 150
             // })
-            count =0;
-            result.forEach((elements)=>{
+            count = 0;
+            result.forEach((elements) => {
                 console.log(elements)
-                if(elements==true){
-                    count+=1
+                if (elements == true) {
+                    count += 1;
                 }
-                });
-                var points = (count/4)*0;
-                // console.log({
-                //     counts : count ,
-                //     points: (count/2)*150
-                // })
-                db.connect((err)=>{
-                    if(err) throw err;
+            });
+            var points = (count / 4) * 200;
+
+            console.log("upper", points)
+            // console.log({
+            //     counts : count ,
+            //     points: (count/2)*150
+            // })
+            db.connect((err) => {
+                if (err) throw err;
                 console.log(teamNumber);
-                let sql3=`select * from score where Teamid=${teamNumber}`;
-                db.query(sql3,(err,result)=>{
-                    if(result.length==0){
-                        let sql = `insert into score values(${teamNumber},${points})`;
-                        db.query(sql,(err,results)=>{
-                            if(err) console.log(err.message);
-                        console.log("inserted the field successfully",results); 
-                     });
-                    }
-                    else{
-                        let marks=`select (score) from score where Teamid=${teamNumber}`;
-                        db.query(marks,(err,results)=>{
-                            if(err) throw err;
-                        var last_score=results[0].score;
-                        uscore=update_score(last_score,`${points}`);
-                            
-                        let sql2=`update score set score=${uscore} where Teamid=${teamNumber}`;
-                        db.query(sql2,(err,result1)=>{
-                            if(err) throw err;
-                        console.log(result1);
-                        })
+                let sql3 = `select * from score where Teamid=${teamNumber}`;
+                db.query(sql3, (err, result) => {
+                    if (result.length == 0) {
+                        console.log("This is the point to the team", points)
+                        let sql = `insert into score values(${teamNumber},${points},now())`;
+                        db.query(sql, (err, results) => {
+                            if (err) console.log(err.message);
+                            console.log("inserted the field successfully", results);
                         });
-                        
-                  
                     }
-                
-                
-                       
-                // console.log(result)
+
+
+
+
+                    else {
+                        let marks = `select (score) from score where Teamid=${teamNumber}`;
+                        db.query(marks, (err, results) => {
+                            if (err) throw err;
+                            var last_score = results[0].score;
+                            uscore = update_score(last_score, `${points}`);
+
+                            if (last_score != uscore) {
+                                let sql2 = `update score set score=${uscore},submissiontime=now() where Teamid=${teamNumber}`;
+                                db.query(sql2, (err, result1) => {
+                                    if (err) throw err;
+                                    console.log(result1);
+
+                                })
+                            }
+                        });
+
+
+                    }
+
+
+
+
+                    // console.log(result)
                     // }
                 })
 
-                
+
             });
         }).catch(e => {
             console.log({
@@ -125,17 +138,15 @@ var storage= multer.diskStorage({
                 message: e
             });
         });
-            res.end("File is uploaded");
+        res.end("File is uploaded");
 
-            
-        });
+
     });
+});
 
 // File storing code ends here
 
-app.listen(3000,function(){
-    console.log("Working on port 3000");
-});
+
 
 // create connection with the database
 
@@ -155,12 +166,13 @@ const db = mysql.createConnection({
 //     // console.log('mysql connected');
 
 // });
-function update_score(last_score,present_score){
-    
-    if(last_score > present_score){
+function update_score(last_score, present_score) {
+
+    if (last_score > present_score) {
         return last_score;
     }
-    else{
+    else {
         return (present_score);
     }
 }
+module.exports(router);
