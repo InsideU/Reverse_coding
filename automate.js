@@ -19,7 +19,7 @@ fs.readdir(__dirname + '/files/download', function (err, filenames) {
     //console.log(filenames);
     filenames.forEach((name) => {
         fs.rename(path + name + '/run.exe', path + name + `/${name}_run.exe`, () => {
-            fs.renameSync(path + name + '/run.o', path + name + `/${name}_run.o`)
+          //  fs.renameSync(path + name + '/run.o', path + name + `/${name}_run.o`)
             var hash = crypto.createHash('md5').update(path + name).digest('hex')
             fs.rename(path + name, path + name + '_' + hash, () => {
                 if (err) console.log(err.message);

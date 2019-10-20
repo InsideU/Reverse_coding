@@ -27,10 +27,10 @@ router.get('/allotments',function(req,res){
                     })    
                 }
                 else{
-                    console.log("You dont have enough credits");
+                    res.json("You dont have enough credits");
                 }
             }) 
-            console.log("Question Alloted");
+            res.json("Question Alloted");
         }
         
         })   

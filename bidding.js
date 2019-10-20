@@ -57,14 +57,18 @@ router.post('/api/userfile', teamPolicy, uploads,function (req, res) {
 
 
             judge(`./uploads/${filename}`, [
-                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${1}\\test\\I1.txt`,
-                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${1}\\test\\I2.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\I1.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\I2.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\I3.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\I4.txt`,
             ], [
-                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${1}\\test\\O1.txt`,
-                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${1}\\test\\O2.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\O1.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\O2.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\O3.txt`,
+                `D:\\nodejs\\reverse_coding\\reverse_codingv2\\files\\ques\\${questionNumber}\\O4.txt`,
             ], `${filetypes}`).then((result) => {
 
-
+                
                 count = 0;
                 result.forEach((elements) => {
                     console.log(elements)
@@ -96,11 +100,11 @@ router.post('/api/userfile', teamPolicy, uploads,function (req, res) {
                         let sql5=`select * from allotment where Teamid=${req.teamno}`
                         req.db.query(sql5,(err,result5)=>{
                         
-                        console.log('this is result5',result5);  
-                         let sql = `update score set score=score+${diff} where Teamid=${teamNumber}`;
+                       //    console.log('this is result5',result5);  
+                         let sql = `update score set score=score+${diff},durationtime=now() where Teamid=${teamNumber}`;
                             req.db.query(sql, (err, results) => {
                                 if (err) throw err;
-                                console.log(results);
+                                //console.log(results);
                             })
                         })
                     }

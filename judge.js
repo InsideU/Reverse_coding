@@ -17,7 +17,7 @@ function run(source, input, output, lang) {
             json: true
         };
         rp(options).then((res) => {
-            console.log(res)
+            
             switch (res.status.id) {
 
                 case 3:

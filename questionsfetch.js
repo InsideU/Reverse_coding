@@ -11,6 +11,7 @@ function run(i, arr, results,db,cb) {
     let sql2 = `select (route) from routetest where questionno=${questionnumbers}`;
     db.query(sql2, (err, res) => {
         if (err) throw err;
+       //console.log(res)
         arr.push({
             win: res[0].route,
             scoredPoints: questioscore,
@@ -36,7 +37,10 @@ router.post('/downloads',teamPolicy, (req, res) => {
     let sql1 = `select * from allotment where teamid = ${req.teamno}`;
     req.db.query(sql1, (err, results) => {
         if (err) throw err;
-        questioscore = (results[0].qscore)
+        questioscore = (results[0].qscore)   // qscore need to be updated
+
+    
+        console.log(results);
         run(0,[],results,req.db,(ar)=>{
             res.json({"Question Details":ar})
         })
