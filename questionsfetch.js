@@ -7,7 +7,7 @@ const app = express();
 
 function run(i, arr, results,db,cb) {
     if (i >= results.length) return cb(arr)
-    var questionnumbers = results[i].questionno;
+    var questionnumbers = Number(results[i].questionno);
     let sql2 = `select (route) from routetest where questionno=${questionnumbers}`;
     db.query(sql2, (err, res) => {
         if (err) throw err;
